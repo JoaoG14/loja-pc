@@ -8,11 +8,13 @@ export default async function CategoryPage({ params }: Params) {
   const supabase = getServerSupabaseClient();
   const slug = params.slug;
 
-  const { data: category } = await supabase
+  const { data: categoriesRes } = await supabase
     .from("categories")
     .select("id,name,slug")
     .eq("slug", slug)
-    .single();
+    .limit(1);
+
+  const category = categoriesRes?.[0];
 
   if (!category) {
     return (
