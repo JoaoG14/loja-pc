@@ -40,7 +40,7 @@ export default async function CartPage() {
     product: productsById[i.product_id],
   }));
 
-  const subtotal = enriched.reduce((acc, it) => acc + ((it.product?.price_cents ?? 0) * it.quantity), 0);
+  const subtotal = enriched.reduce((acc: number, it) => acc + ((it.product?.price_cents ?? 0) * it.quantity), 0);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
