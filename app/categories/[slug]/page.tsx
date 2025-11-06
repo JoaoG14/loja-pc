@@ -34,6 +34,7 @@ export default async function CategoryPage({ params }: Params) {
     .eq("category_id", category.id)
     .order("created_at", { ascending: false });
 
+  type Product = any;
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
       <div className="mb-4 text-sm text-zinc-500">
@@ -45,7 +46,7 @@ export default async function CategoryPage({ params }: Params) {
           <h1 className="text-2xl font-semibold mb-4">{category.name}</h1>
           {products && products.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {products.map((p) => (
+              {products.map((p: Product) => (
                 <ProductCard key={p.id} product={p as any} />
               ))}
             </div>

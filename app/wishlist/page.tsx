@@ -23,7 +23,8 @@ export default async function WishlistPage() {
   type WishlistItem = { product_id: string };
   const productIds = (wishlist ?? []).map((w: WishlistItem) => w.product_id);
 
-  let products: any[] = [];
+  type Product = any;
+  let products: Product[] = [];
   if (productIds.length > 0) {
     const { data } = await supabase
       .from('products')
@@ -39,7 +40,7 @@ export default async function WishlistPage() {
         <p className="text-sm text-zinc-500">Você ainda não favoritou nenhum produto.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {products.map((p) => (
+          {products.map((p: Product) => (
             <ProductCard key={p.id} product={p as any} />
           ))}
         </div>
