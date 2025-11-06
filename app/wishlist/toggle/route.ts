@@ -10,11 +10,11 @@ export async function POST(request: Request) {
   const { data: userRes } = await supabase.auth.getUser();
   const user = userRes?.user;
   if (!user) {
-    return NextResponse.redirect(new URL('/auth/login', process.env.NEXT_PUBLIC_BASE_URL || "https://loja-pc-iota.vercel.app/" || 'http://localhost:3000'));
+    return NextResponse.redirect(new URL('/auth/login', "https://loja-pc-iota.vercel.app"));
   }
 
   if (!productId) {
-    return NextResponse.redirect(new URL(redirectTo, process.env.NEXT_PUBLIC_BASE_URL || "https://loja-pc-iota.vercel.app/" || 'http://localhost:3000'));
+    return NextResponse.redirect(new URL(redirectTo, "https://loja-pc-iota.vercel.app"));
   }
 
   const { data: existing } = await supabase
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     await supabase.from('wishlists').insert({ user_id: user.id, product_id: productId });
   }
 
-  return NextResponse.redirect(new URL(redirectTo, process.env.NEXT_PUBLIC_BASE_URL || "https://loja-pc-iota.vercel.app/" || 'http://localhost:3000'));
+  return NextResponse.redirect(new URL(redirectTo, "https://loja-pc-iota.vercel.app"));
 }
 
 
