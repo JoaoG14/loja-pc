@@ -36,7 +36,7 @@ export default async function CartPage() {
   }
 
   type EnrichedCartItem = CartItem & { product?: any };
-  const enriched = (items ?? []).map((i: CartItem) => ({
+  const enriched: EnrichedCartItem[] = (items ?? []).map((i: CartItem) => ({
     ...i,
     product: productsById[i.product_id],
   }));
@@ -51,7 +51,7 @@ export default async function CartPage() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-4">
-            {enriched.map((it) => (
+            {enriched.map((it: EnrichedCartItem) => (
               <div key={it.id} className="flex items-center gap-4 border border-zinc-200/60 dark:border-zinc-800/60 rounded-lg p-3">
                 <div className="h-16 w-16 bg-zinc-100 dark:bg-zinc-900 rounded overflow-hidden flex items-center justify-center">
                   {(it.product as any)?.categories?.fallback_image ? (
