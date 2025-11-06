@@ -3,13 +3,13 @@ import CategoryFilters from "@/components/CategoryFilters";
 import ProductCard from "@/components/ProductCard";
 
 export default async function Home() {
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
 
   const [{ data: categories }, { data: products }] = await Promise.all([
     supabase.from("categories").select("id,name,slug").order("name", { ascending: true }),
     supabase
       .from("products")
-      .select("id,name,slug,price_cents,brand,product_images(url,is_primary)")
+      .select("id,name,slug,price_cents,brand,categories(fallback_image)")
       .limit(12),
   ]);
 
@@ -20,8 +20,8 @@ export default async function Home() {
         <section className="flex-1">
           <h1 className="text-2xl font-semibold mb-4">Destaques</h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {(products ?? []).map((p) => (
-              <ProductCard key={p.id} product={p as any} />
+            {(products ?? []).map((p: any) => (
+              <ProductCard key={p.id} product={p} />
             ))}
           </div>
         </section>

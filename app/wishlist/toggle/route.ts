@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getRouteSupabaseClient } from '@/lib/supabase/route';
 
 export async function POST(request: Request) {
-  const supabase = getRouteSupabaseClient();
+  const supabase = await getRouteSupabaseClient();
   const form = await request.formData();
   const productId = String(form.get('product_id') || '');
   const redirectTo = String(form.get('redirect_to') || '/wishlist');

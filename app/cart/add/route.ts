@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getRouteSupabaseClient } from '@/lib/supabase/route';
 
 export async function POST(request: Request) {
-  const supabase = getRouteSupabaseClient();
+  const supabase = await getRouteSupabaseClient();
   const form = await request.formData();
   const productId = String(form.get('product_id') || '');
   const redirectTo = String(form.get('redirect_to') || '/cart');
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     .upsert({ user_id: user.id, product_id: productId, quantity: 1 }, { onConflict: 'user_id,product_id' })
     .select();
 
-  return NextResponse.redirect(new URL('/cart', process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'));
+  return NextResponse.redirect(new URL(redirectTo, process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'));
 }
 
 

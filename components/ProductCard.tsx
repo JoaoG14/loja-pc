@@ -6,7 +6,7 @@ type Product = {
   slug: string;
   price_cents: number;
   brand: string | null;
-  product_images?: { url: string; is_primary: boolean }[];
+  categories?: { fallback_image: string | null };
 };
 
 function formatPrice(cents: number): string {
@@ -14,16 +14,16 @@ function formatPrice(cents: number): string {
 }
 
 export default function ProductCard({ product }: { product: Product }) {
-  const image = product.product_images?.find((i) => i.is_primary) || product.product_images?.[0];
+  const imageUrl = (product.categories as any)?.fallback_image;
   return (
     <Link
       href={`/products/${product.slug}`}
       className="group rounded-lg border border-zinc-200/60 dark:border-zinc-800/60 p-3 hover:shadow-sm transition-shadow"
     >
-      <div className="aspect-[4/3] w-full bg-zinc-100 dark:bg-zinc-900 rounded-md overflow-hidden mb-3 flex items-center justify-center">
-        {image ? (
+      <div className="aspect-4/3 w-full bg-zinc-100 dark:bg-zinc-900 rounded-md overflow-hidden mb-3 flex items-center justify-center">
+        {imageUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={image.url} alt={product.name} className="h-full w-full object-cover" />
+          <img src={imageUrl} alt={product.name} className="h-full w-full object-cover" />
         ) : (
           <div className="text-xs text-zinc-500">Sem imagem</div>
         )}

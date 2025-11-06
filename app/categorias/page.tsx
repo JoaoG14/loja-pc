@@ -2,7 +2,7 @@ import { getServerSupabaseClient } from "@/lib/supabase/server";
 import Link from "next/link";
 
 export default async function CategoriasPage() {
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { data: categories } = await supabase.from('categories').select('id,name,slug').order('name');
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">

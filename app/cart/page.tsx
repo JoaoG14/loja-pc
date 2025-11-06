@@ -6,7 +6,7 @@ function formatPrice(cents: number): string {
 }
 
 export default async function CartPage() {
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { data: userRes } = await supabase.auth.getUser();
   const user = userRes?.user;
 
@@ -29,7 +29,7 @@ export default async function CartPage() {
   if (productIds.length > 0) {
     const { data } = await supabase
       .from('products')
-      .select('id,name,slug,price_cents,brand,product_images(url,is_primary)')
+      .select('id,name,slug,price_cents,brand,categories(fallback_image)')
       .in('id', productIds);
     for (const p of data ?? []) productsById[p.id] = p;
   }
@@ -52,9 +52,9 @@ export default async function CartPage() {
             {enriched.map((it) => (
               <div key={it.id} className="flex items-center gap-4 border border-zinc-200/60 dark:border-zinc-800/60 rounded-lg p-3">
                 <div className="h-16 w-16 bg-zinc-100 dark:bg-zinc-900 rounded overflow-hidden flex items-center justify-center">
-                  {it.product?.product_images?.[0] ? (
+                  {(it.product as any)?.categories?.fallback_image ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={it.product.product_images[0].url} alt={it.product.name} className="h-full w-full object-cover" />
+                    <img src={(it.product as any).categories.fallback_image} alt={it.product.name} className="h-full w-full object-cover" />
                   ) : null}
                 </div>
                 <div className="flex-1">

@@ -3,7 +3,7 @@ import ProductCard from "@/components/ProductCard";
 import Link from "next/link";
 
 export default async function WishlistPage() {
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { data: userRes } = await supabase.auth.getUser();
   const user = userRes?.user;
 
@@ -26,7 +26,7 @@ export default async function WishlistPage() {
   if (productIds.length > 0) {
     const { data } = await supabase
       .from('products')
-      .select('id,name,slug,price_cents,brand,product_images(url,is_primary)')
+      .select('id,name,slug,price_cents,brand,categories(fallback_image)')
       .in('id', productIds);
     products = data ?? [];
   }

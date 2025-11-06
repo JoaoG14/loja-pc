@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { getServerSupabaseClient } from '@/lib/supabase/server';
 
 export default async function NavBar() {
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { data } = await supabase.auth.getUser();
   const user = data?.user;
   return (

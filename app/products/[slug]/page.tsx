@@ -1,20 +1,20 @@
 import { getServerSupabaseClient } from "@/lib/supabase/server";
 import Link from "next/link";
 
-type Params = { params: { slug: string } };
+type Params = { params: Promise<{ slug: string }> };
 
 function formatPrice(cents: number): string {
   return (cents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
 
 export default async function ProductPage({ params }: Params) {
-  const supabase = getServerSupabaseClient();
-  const slug = params.slug;
+  const supabase = await getServerSupabaseClient();
+  const { slug } = await params;
 
   const { data: product } = await supabase
     .from("products")
     .select(
-      "id,name,slug,description,price_cents,brand,model,stock,socket,chipset,tdp_watts,memory_type,wattage,form_factor,warranty_months,product_images(url,is_primary),product_specs(spec_key,spec_value)"
+      "id,name,slug,description,price_cents,brand,model,stock,socket,chipset,tdp_watts,memory_type,wattage,form_factor,warranty_months,categories(fallback_image),product_specs(spec_key,spec_value)"
     )
     .eq("slug", slug)
     .single();
@@ -27,7 +27,7 @@ export default async function ProductPage({ params }: Params) {
     );
   }
 
-  const primaryImage = product.product_images?.find((i: any) => i.is_primary) || product.product_images?.[0];
+  const imageUrl = (product.categories as any)?.fallback_image;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
@@ -36,22 +36,14 @@ export default async function ProductPage({ params }: Params) {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
-          <div className="aspect-[4/3] w-full bg-zinc-100 dark:bg-zinc-900 rounded-md overflow-hidden flex items-center justify-center">
-            {primaryImage ? (
+          <div className="aspect-4/3 w-full bg-zinc-100 dark:bg-zinc-900 rounded-md overflow-hidden flex items-center justify-center">
+            {imageUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={primaryImage.url} alt={product.name} className="h-full w-full object-cover" />
+              <img src={imageUrl} alt={product.name} className="h-full w-full object-cover" />
             ) : (
               <div className="text-xs text-zinc-500">Sem imagem</div>
             )}
           </div>
-          {product.product_images && product.product_images.length > 1 && (
-            <div className="mt-3 grid grid-cols-5 gap-2">
-              {product.product_images.map((img: any, idx: number) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img key={idx} src={img.url} alt="miniatura" className="aspect-square object-cover rounded" />
-              ))}
-            </div>
-          )}
         </div>
         <div>
           <h1 className="text-2xl font-semibold">{product.name}</h1>

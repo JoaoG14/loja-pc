@@ -1,24 +1,34 @@
+import { cookies } from 'next/headers';
 import { createServerClient, type CookieOptions, type SupabaseClient } from '@supabase/ssr';
 
-export function getServerSupabaseClient(): SupabaseClient {
+export async function getServerSupabaseClient(): Promise<SupabaseClient> {
+  const cookieStore = await cookies();
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !anonKey) {
     throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY');
   }
 
-  // Create a server client with a no-op cookie adapter to satisfy SSR requirements.
-  // This disables session persistence in RSC and avoids runtime cookie API differences.
   return createServerClient(url, anonKey, {
     cookies: {
-      get(_name: string): string | undefined {
-        return undefined;
+      get(name: string) {
+        return cookieStore.get(name)?.value;
       },
-      set(_name: string, _value: string, _options: CookieOptions): void {
-        // noop
+      set(name: string, value: string, options: CookieOptions) {
+        try {
+          cookieStore.set({ name, value, ...options });
+        } catch (error) {
+          // In some contexts (like redirects), setting cookies might fail
+          // This is expected behavior and can be safely ignored
+        }
       },
-      remove(_name: string, _options: CookieOptions): void {
-        // noop
+      remove(name: string, options: CookieOptions) {
+        try {
+          cookieStore.set({ name, value: '', ...options });
+        } catch (error) {
+          // In some contexts (like redirects), removing cookies might fail
+          // This is expected behavior and can be safely ignored
+        }
       },
     },
   });
