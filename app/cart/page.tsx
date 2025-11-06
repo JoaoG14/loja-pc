@@ -23,7 +23,8 @@ export default async function CartPage() {
     .select('id, product_id, quantity')
     .eq('user_id', user.id);
 
-  const productIds = (items ?? []).map(i => i.product_id);
+  type CartItem = { id: string; product_id: string; quantity: number };
+  const productIds = (items ?? []).map((i: CartItem) => i.product_id);
 
   let productsById: Record<string, any> = {};
   if (productIds.length > 0) {
@@ -34,7 +35,7 @@ export default async function CartPage() {
     for (const p of data ?? []) productsById[p.id] = p;
   }
 
-  const enriched = (items ?? []).map(i => ({
+  const enriched = (items ?? []).map((i: CartItem) => ({
     ...i,
     product: productsById[i.product_id],
   }));

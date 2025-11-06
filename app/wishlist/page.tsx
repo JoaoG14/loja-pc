@@ -20,7 +20,8 @@ export default async function WishlistPage() {
     .select('product_id')
     .eq('user_id', user.id);
 
-  const productIds = (wishlist ?? []).map(w => w.product_id);
+  type WishlistItem = { product_id: string };
+  const productIds = (wishlist ?? []).map((w: WishlistItem) => w.product_id);
 
   let products: any[] = [];
   if (productIds.length > 0) {
